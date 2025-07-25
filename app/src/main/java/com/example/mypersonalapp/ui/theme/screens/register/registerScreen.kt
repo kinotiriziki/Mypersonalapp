@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -88,27 +89,31 @@ fun registerScreen(navController: NavController){
 
         OutlinedTextField(value = username, onValueChange = {username=it},
             label = { Text("Enter Username", color = Color.White, fontWeight = FontWeight.Bold)},
-            placeholder = {Text("Please enter your username",color = Color.Blue, fontWeight = FontWeight.Bold)},
+            textStyle = TextStyle(Color.Blue),
+            placeholder = {Text("Please enter your username",color = Color.White, fontWeight = FontWeight.Bold)},
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Person icon",) },
             modifier = Modifier.fillMaxWidth(0.8f))
 
         OutlinedTextField(value = fullname, onValueChange = {fullname=it},
             label = { Text("Enter Full name", color = Color.White, fontWeight = FontWeight.Bold)},
-            placeholder = {Text("Please enter your full name",color = Color.Blue, fontWeight = FontWeight.Bold)},
+            textStyle = TextStyle(Color.Blue),
+            placeholder = {Text("Please enter your full name",color = Color.White, fontWeight = FontWeight.Bold)},
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Person icon",) },
             modifier = Modifier.fillMaxWidth(0.8f))
 
         OutlinedTextField(value = email, onValueChange = {email=it},
             label = { Text("Enter Email",color = Color.White, fontWeight = FontWeight.Bold) },
-            placeholder = { Text("Please enter email",color = Color.Blue, fontWeight = FontWeight.Bold) },
+            textStyle = TextStyle(Color.Blue),
+            placeholder = { Text("Please enter email",color = Color.White, fontWeight = FontWeight.Bold) },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email icon") },
             modifier = Modifier.fillMaxWidth(0.8f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
 
         OutlinedTextField(value = password, onValueChange = {password=it},
-            label = { Text("Enter Your Password",color = Color.Blue, fontWeight = FontWeight.Bold)},
-            placeholder = {Text("Please enter your password",color = Color.Blue, fontWeight = FontWeight.Bold)},
+            label = { Text("Enter Your Password",color = Color.White, fontWeight = FontWeight.Bold)},
+            textStyle = TextStyle(Color.Blue,),
+            placeholder = {Text("Please enter your password",color = Color.White, fontWeight = FontWeight.Bold)},
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock icon") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(0.8f),
@@ -117,6 +122,7 @@ fun registerScreen(navController: NavController){
 
         OutlinedTextField(value = confirmpassword, onValueChange = {confirmpassword=it},
             label = { Text("Confirm Your Password",color = Color.White, fontWeight = FontWeight.Bold)},
+            textStyle = TextStyle(Color.Blue),
             placeholder = {Text("Please confirm your password",color = Color.White, fontWeight = FontWeight.Bold)},
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock icon") },
             visualTransformation = PasswordVisualTransformation(),
@@ -127,6 +133,7 @@ fun registerScreen(navController: NavController){
         val context = LocalContext.current
         Button(onClick = {
             authViewModel.signup(username = username,
+                fullname = fullname,
                 email = email,
                 password = password,
                 confirmpassword = confirmpassword,
