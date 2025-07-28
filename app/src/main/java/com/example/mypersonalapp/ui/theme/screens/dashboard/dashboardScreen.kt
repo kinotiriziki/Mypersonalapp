@@ -1,16 +1,38 @@
 package com.example.mypersonalapp.ui.theme.screens.dashboard
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -19,23 +41,71 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mypersonalapp.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController) {
-    Column {
-        Text(
-            text = "Dashboard",
-            fontSize = 30.sp,
-            fontFamily = FontFamily.SansSerif,
-            fontStyle = FontStyle.Normal,
-            color = Color.Magenta,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .padding(5.dp))
+    val selectedItem = remember { mutableStateOf(1) }
+   Scaffold (bottomBar = {
+       NavigationBar (containerColor = Color.Cyan){
+          NavigationBarItem(
+              selected = selectedItem.value == 0,
+              onClick = {},
+              icon = { Icon(Icons.Filled.Share, contentDescription = "Share") },
+              label = { Text(text = "Share") },
+              alwaysShowLabel = true)
 
-    }
+           NavigationBarItem(
+               selected = selectedItem.value == 1,
+               onClick = {},
+               icon = {Icon(Icons.Filled.Home, contentDescription = "Home") },
+               label = { Text(text ="Home") },
+               alwaysShowLabel = true
+           )
+
+           NavigationBarItem(
+               selected = selectedItem.value == 2,
+               onClick = {},
+               icon = {Icon(Icons.Filled.Email, contentDescription = "Email") },
+               label = { Text(text ="Email") },
+               alwaysShowLabel = true
+           )
+       }
+   })
+   {innerPadding ->
+       Box(modifier = Modifier.padding(innerPadding)){
+           Image(painter = painterResource(id = R.drawable.willianjusten),
+               contentDescription = "Background image",
+               contentScale = ContentScale.FillBounds)
+       }
+       Column {
+           TopAppBar(title = { Text(text = "I&M Bank") },
+               navigationIcon = {
+                   IconButton(onClick = {}) {
+                       Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                   }
+
+               },
+               actions = {
+                   IconButton(onClick = {}) {
+                       Icon(Icons.Filled.Search, contentDescription = "Search")
+                   }
+                   IconButton(onClick = {}) {
+                       Icon(Icons.Filled.Person, contentDescription = "Person")
+                   }
+                   IconButton(onClick = {}) {
+                       Icon(Icons.Filled.AccountCircle, contentDescription = "Logout")
+                   }
+               },
+               colors = TopAppBarDefaults.topAppBarColors(
+                   containerColor = Color.Cyan,
+                   titleContentColor = Color.White
+
+               )
+           )
+       }
+   }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
