@@ -1,10 +1,12 @@
 package com.example.mypersonalapp.ui.theme.screens.clients
 
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,10 +22,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,28 +51,50 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.mypersonalapp.R
 import com.example.mypersonalapp.data.ClientViewModel
+import com.example.mypersonalapp.models.Client
 import com.example.mypersonalapp.navigation.ROUTE_DASHBOARD
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.tasks.await
 
 @Composable
-fun AddClientScreen(navController: NavController){
-    var name by remember { mutableStateOf("") }
-    var gender by remember { mutableStateOf("") }
-    var nationality by remember { mutableStateOf("") }
-    var age by remember { mutableStateOf("") }
-    var details by remember { mutableStateOf("") }
-    var contact by remember { mutableStateOf("") }
-    var imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
-    var launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
-        uri: Uri? ->  uri?.let { imageUri.value=it }
-    }
+fun UpdateClientScreen(navController: NavController,clientId:String){
     val clientViewModel:ClientViewModel = viewModel()
+    var client by remember { mutableStateOf<Client?>(null) }
+    LaunchedEffect(clientId) {
+        val ref = FirebaseDatabase.getInstance()
+            .getReference("Clients").child(clientId)
+        val snapshot = ref.get().await()
+        client = snapshot.getValue(Client::class.java)?.apply {
+            id= clientId
+        }
+    }
+    if (client==null){
+        Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center){
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    var name by remember { mutableStateOf(client!!.name?:"") }
+    var gender by remember { mutableStateOf(client!!.gender?:"") }
+    var nationality by remember { mutableStateOf(client!!.nationality?:"") }
+    var age by remember { mutableStateOf(client!!.age?:"") }
+    var details by remember { mutableStateOf(client!!.details?:"") }
+    var contact by remember { mutableStateOf(client!!.contact ?:"") }
+
+    val imageUri = remember() { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+          it?. let { uri -> imageUri.value = uri }
+    }
+
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().padding(15.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "ADD NEW CLIENT",
+            text = "UPDATE CLIENT",
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             fontSize = 26.sp,
@@ -78,7 +104,7 @@ fun AddClientScreen(navController: NavController){
         )
         Card (shape = CircleShape,
             modifier = Modifier.padding(10.dp).size(200.dp)) {
-            AsyncImage(model = imageUri.value ?: R.drawable.ic_person,
+            AsyncImage(model = imageUri.value ?:client!!.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(200.dp).clickable {
@@ -86,14 +112,14 @@ fun AddClientScreen(navController: NavController){
                 })
 
         }
-        Text(text = "Upload Picture Here")
+        Text(text = "Change Picture Here")
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
             label = { Text(text = "Full Name") },
             textStyle = TextStyle(Color.Blue),
             placeholder = { Text(text = "Please enter client name") },
-             modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = gender,
@@ -142,21 +168,9 @@ fun AddClientScreen(navController: NavController){
             Button(onClick = {navController.navigate(ROUTE_DASHBOARD)
             },colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD81B60)),) { Text(text = "GO BACK") }
             Button(onClick = {
-                clientViewModel.uploadClient(imageUri.value,
-                    name,
-                    gender,
-                    nationality,
-                    contact,
-                    age,
-                    details,
-                    context)
-            }) { Text(text = "SAVE") }
+
+            }) { Text(text = "UPDATE") }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun AddClientScreenPreview(){
-    AddClientScreen(rememberNavController())
-}

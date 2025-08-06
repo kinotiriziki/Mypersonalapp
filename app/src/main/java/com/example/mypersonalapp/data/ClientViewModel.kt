@@ -3,8 +3,10 @@ package com.example.mypersonalapp.data
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mypersonalapp.models.Client
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ class ClientViewModel:ViewModel() {
                      name:String,
                      gender:String,
                      nationality:String,
+                     contact :String,
                      age : String,
                      details:String,
                      context: Context)
@@ -37,9 +40,10 @@ class ClientViewModel:ViewModel() {
                     "name" to name,
                     "gender" to gender,
                     "nationality" to nationality,
+                    "contact" to contact,
                     "age" to age,
                     "details" to details,
-                    "imageUrl" to imageUri
+                    "imageUrl" to imageUrl
                 )
                 ref.setValue(clientData).await()
                 withContext(Dispatchers.Main){
@@ -68,6 +72,70 @@ class ClientViewModel:ViewModel() {
         val secureUrl = Regex("\"secure_url\":\"(.*?)\"")
             .find(responseBody ?: "")?.groupValues?.get(1)
         return secureUrl ?: throw Exception("Failed to get image URL")
+
+    }
+    private val _clients= mutableStateListOf<Client>()
+    val clients:List<Client> = _clients
+
+    fun fetchClients(context: Context){
+        val ref = FirebaseDatabase.getInstance().getReference("Clients")
+        ref.get().addOnSuccessListener { snapshot ->
+            _clients.clear()
+            for (child in snapshot.children) {
+                val client = child.getValue(Client::class.java)
+                client?.let { _clients.add(it) }
+
+            }
+        }.addOnFailureListener {
+            Toast.makeText(context,"Failed to load Clients",Toast.LENGTH_LONG).show()
+        }
+    }
+    fun deleteClient(clientId: String,context: Context){
+        val ref = FirebaseDatabase.getInstance().getReference("clients").child(clientId)
+        ref.removeValue().addOnSuccessListener {
+            _clients.removeAll{it.id==clientId}
+            Toast.makeText(context,"Client is successfully deleted", Toast.LENGTH_LONG).show()
+        }.addOnFailureListener {
+            Toast.makeText(context, "Client Not Deleted!",Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun updateClient(clientId: String,
+                     imageUri: Uri?,
+                     name: String,
+                     gender: String,
+                     nationality: String,
+                     contact: String,
+                     age: String,
+                     details: String,
+                     context: Context){
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                val imageUrl=  imageUri?.let { uploadToCloudinary(context,it) }
+                val updateClient = mapOf(
+                    "id" to clientId,
+                    "name" to name,
+                    "gender" to gender,
+                    "nationality" to nationality,
+                    "contact" to contact,
+                    "age" to age,
+                    "details" to details,
+                    "imageUrl" to imageUrl
+                )
+                val ref = FirebaseDatabase.getInstance()
+                    .getReference("Clients").child(clientId)
+                ref.setValue(updateClient).await()
+                fetchClients(context)
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,"Client updated successfully",Toast.LENGTH_LONG).show()
+                }
+            }catch (e:Exception){
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,"Updated Failed",Toast.LENGTH_LONG).show()
+
+                }
+            }
+        }
 
     }
 }

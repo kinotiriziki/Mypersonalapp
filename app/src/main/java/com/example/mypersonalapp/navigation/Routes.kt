@@ -6,4 +6,8 @@ const val ROUTE_LOGIN = "login"
 
 const val ROUTE_DASHBOARD = "dashboard"
 
-const val ROUTE_ADDCLIENT = "addpatient"
+const val ROUTE_ADDCLIENT = "addclient"
+
+const val ROUTE_VIEWCLIENT = "viewclient"
+
+const val ROUTE_UPDATECLIENT = "updateclient/{clientId}"

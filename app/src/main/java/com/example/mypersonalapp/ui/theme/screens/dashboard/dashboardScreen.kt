@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mypersonalapp.R
 import com.example.mypersonalapp.navigation.ROUTE_ADDCLIENT
 import com.example.mypersonalapp.navigation.ROUTE_REGISTER
+import com.example.mypersonalapp.navigation.ROUTE_VIEWCLIENT
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +141,8 @@ fun DashboardScreen(navController: NavController) {
                }
                Spacer(modifier = Modifier.width(30.dp))
                Card(
-                   modifier = Modifier.padding(10.dp).clickable { },
+                   modifier = Modifier.padding(10.dp).clickable {navController.navigate(
+                       ROUTE_VIEWCLIENT) },
                    shape = RoundedCornerShape(20.dp),
                    elevation = CardDefaults.cardElevation(10.dp),
                    colors = CardDefaults.cardColors(Color.White)
