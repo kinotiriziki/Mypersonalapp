@@ -13,15 +13,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -82,6 +86,7 @@ fun UpdateClientScreen(navController: NavController,clientId:String){
     var age by remember { mutableStateOf(client!!.age?:"") }
     var details by remember { mutableStateOf(client!!.details?:"") }
     var contact by remember { mutableStateOf(client!!.contact ?:"") }
+    var nextOfKin by remember { mutableStateOf("") }
 
     val imageUri = remember() { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
@@ -90,9 +95,15 @@ fun UpdateClientScreen(navController: NavController,clientId:String){
 
     val context = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize().padding(15.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(15.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = "UPDATE CLIENT",
             fontStyle = FontStyle.Normal,
@@ -102,8 +113,13 @@ fun UpdateClientScreen(navController: NavController,clientId:String){
             color = Color.Blue,
             modifier = Modifier.fillMaxWidth()
         )
-        Card (shape = CircleShape,
-            modifier = Modifier.padding(10.dp).size(200.dp)) {
+        Card(
+            shape = CircleShape,
+            modifier = Modifier
+                .padding(10.dp)
+                .size(200.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
             AsyncImage(model = imageUri.value ?:client!!.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -154,20 +170,45 @@ fun UpdateClientScreen(navController: NavController,clientId:String){
             placeholder = { Text(text = "Please enter client age") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        OutlinedTextField(
+            value = nextOfKin,
+            onValueChange = { nextOfKin = it },
+            label = { Text(text = "Next of Kin") },
+            textStyle = TextStyle(Color.Blue),
+            placeholder = { Text(text = "Please enter next of kin name") },
+            modifier = Modifier
+                .fillMaxWidth()
+//                .padding(vertical = 4.dp)
+        )
+
         OutlinedTextField(
             value = details,
             onValueChange = { details = it },
             label = { Text(text = "Details") },
             textStyle = TextStyle(Color.Blue),
             placeholder = { Text(text = "Details") },
-            modifier = Modifier.fillMaxWidth().height(150.dp),
+            modifier = Modifier.fillMaxWidth().height(100.dp),
             singleLine = false
         )
         Row (modifier = Modifier.fillMaxWidth(0.8f),
             horizontalArrangement = Arrangement.SpaceBetween){
-            Button(onClick = {navController.navigate(ROUTE_DASHBOARD)
+            Button(onClick = {navController.popBackStack()
             },colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD81B60)),) { Text(text = "GO BACK") }
             Button(onClick = {
+                clientViewModel.updateClient(
+                    clientId,
+                    imageUri.value,
+                    name,
+                    gender,
+                    nationality,
+                    contact,
+                    age,
+                    nextOfKin,
+                    details,
+                    context,
+                    navController
+                )
 
             }) { Text(text = "UPDATE") }
         }

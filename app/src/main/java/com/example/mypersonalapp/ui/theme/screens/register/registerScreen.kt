@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
@@ -51,6 +54,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mypersonalapp.R
 import com.example.mypersonalapp.data.AuthViewModel
 import com.example.mypersonalapp.navigation.ROUTE_LOGIN
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
 
 @Composable
 fun registerScreen(navController: NavController){
@@ -66,9 +72,15 @@ fun registerScreen(navController: NavController){
             contentDescription = "Image background",
             contentScale = ContentScale.FillBounds)
     }
-    Column(modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(15.dp)
+            .imePadding(),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = "Register Here",
             fontSize = 30.sp,
             fontFamily = FontFamily.SansSerif,

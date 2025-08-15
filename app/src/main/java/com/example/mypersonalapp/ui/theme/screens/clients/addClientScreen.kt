@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -47,7 +48,14 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.mypersonalapp.R
 import com.example.mypersonalapp.data.ClientViewModel
-import com.example.mypersonalapp.navigation.ROUTE_DASHBOARD
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
+
+
 
 @Composable
 fun AddClientScreen(navController: NavController){
@@ -57,6 +65,7 @@ fun AddClientScreen(navController: NavController){
     var age by remember { mutableStateOf("") }
     var details by remember { mutableStateOf("") }
     var contact by remember { mutableStateOf("") }
+    var nextOfKin by remember { mutableStateOf("") }
     var imageUri = rememberSaveable() { mutableStateOf<Uri?>(null) }
     var launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         uri: Uri? ->  uri?.let { imageUri.value=it }
@@ -64,9 +73,16 @@ fun AddClientScreen(navController: NavController){
     val clientViewModel:ClientViewModel = viewModel()
     val context = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize().padding(15.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(15.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    )
+    {
         Text(
             text = "ADD NEW CLIENT",
             fontStyle = FontStyle.Normal,
@@ -76,16 +92,23 @@ fun AddClientScreen(navController: NavController){
             color = Color.Blue,
             modifier = Modifier.fillMaxWidth()
         )
-        Card (shape = CircleShape,
-            modifier = Modifier.padding(10.dp).size(200.dp)) {
-            AsyncImage(model = imageUri.value ?: R.drawable.ic_person,
-                contentDescription = null,
+        Card(
+            shape = CircleShape,
+            modifier = Modifier
+                .padding(10.dp)
+                .size(200.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            AsyncImage(
+                model = imageUri.value ?: R.drawable.ic_person,
+                contentDescription = "Profile Image",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(200.dp).clickable {
-                    launcher.launch("image/*")
-                })
-
+                modifier = Modifier
+                    .size(200.dp)
+                    .clickable { launcher.launch("image/*") }
+            )
         }
+
         Text(text = "Upload Picture Here")
         OutlinedTextField(
             value = name,
@@ -129,29 +152,62 @@ fun AddClientScreen(navController: NavController){
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
+            value = nextOfKin,
+            onValueChange = { nextOfKin = it },
+            label = { Text(text = "Next of Kin") },
+            textStyle = TextStyle(Color.Blue),
+            placeholder = { Text(text = "Please enter next of kin name") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        )
+
+
+        OutlinedTextField(
             value = details,
             onValueChange = { details = it },
             label = { Text(text = "Details") },
             textStyle = TextStyle(Color.Blue),
             placeholder = { Text(text = "Details") },
-            modifier = Modifier.fillMaxWidth().height(150.dp),
+            modifier = Modifier.fillMaxWidth().height(100.dp),
             singleLine = false
         )
-        Row (modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.SpaceBetween){
-            Button(onClick = {navController.navigate(ROUTE_DASHBOARD)
-            },colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD81B60)),) { Text(text = "GO BACK") }
-            Button(onClick = {
-                clientViewModel.uploadClient(imageUri.value,
-                    name,
-                    gender,
-                    nationality,
-                    contact,
-                    age,
-                    details,
-                    context)
-            }) { Text(text = "SAVE") }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = { navController.popBackStack() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFD81B60))
+            ) {
+                Text(text = "GO BACK")
+            }
+
+            Button(
+                onClick = {
+                    clientViewModel.uploadClient(
+                        imageUri.value,
+                        name,
+                        gender,
+                        nationality,
+                        contact,
+                        age,
+                        nextOfKin,
+                        details,
+                        context,
+                        navController
+                    )
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1976D2))
+            ) {
+                Text(text = "SAVE")
+            }
         }
+
     }
 }
 

@@ -11,3 +11,5 @@ const val ROUTE_ADDCLIENT = "addclient"
 const val ROUTE_VIEWCLIENT = "viewclient"
 
 const val ROUTE_UPDATECLIENT = "updateclient/{clientId}"
+
+const val ROUTE_SPLASH = "splash"

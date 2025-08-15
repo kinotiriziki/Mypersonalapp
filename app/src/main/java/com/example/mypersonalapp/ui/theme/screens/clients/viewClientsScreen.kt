@@ -37,6 +37,9 @@ import coil.compose.AsyncImage
 import com.example.mypersonalapp.data.ClientViewModel
 import com.example.mypersonalapp.models.Client
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import com.example.mypersonalapp.navigation.ROUTE_DASHBOARD
 
 @Composable
 fun ClientListScreen(navController: NavController){
@@ -116,12 +119,18 @@ fun ClientCard(client: Client,
             TextButton(onClick = {
                 navController.navigate("updateclient/${client.id}")
             }) {
-                Text("UPDATE", color = Color.Green)
+                Text("UPDATE", color = Color.Cyan)
             }
             TextButton(onClick = { showDialog= true}) {
                 Text("DELETE", color = Color.Red)
             }
         }
+    }
+    Row (modifier = Modifier.fillMaxWidth(0.8f),
+        horizontalArrangement = Arrangement.SpaceBetween){
+        Button(onClick = {navController.navigate(ROUTE_DASHBOARD)
+        },colors = ButtonDefaults.buttonColors( containerColor = Color(0xFF1976D2)),)
+        { Text(text = "GO BACK") }
     }
 }
 

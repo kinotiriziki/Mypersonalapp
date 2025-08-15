@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +54,13 @@ fun loginScreen(navController: NavController){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val authViewModel: AuthViewModel = viewModel()
+
+    Box(){
+        Image(painter = painterResource(id = R.drawable.peximg),
+            contentDescription = "Image background",
+            contentScale = ContentScale.FillBounds)
+    }
+
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -75,17 +83,17 @@ fun loginScreen(navController: NavController){
             contentScale = ContentScale.Fit)
 
         OutlinedTextField(value = email, onValueChange = {email=it},
-            label = { Text("Enter Email", color = Color.Black, fontWeight = FontWeight.Bold) },
+            label = { Text("Enter Email", color = Color.White, fontWeight = FontWeight.Bold) },
             textStyle = TextStyle(Color.Blue),
-            placeholder = { Text("Please enter email", color = Color.Black, fontWeight = FontWeight.Bold) },
+            placeholder = { Text("Please enter email", color = Color.White, fontWeight = FontWeight.Bold) },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email icon") },
             modifier = Modifier.fillMaxWidth(0.8f),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
 
         OutlinedTextField(value = password, onValueChange = {password=it },
-            label = { Text("Enter Your Password",color = Color.Black, fontWeight = FontWeight.Bold)},
+            label = { Text("Enter Your Password",color = Color.White, fontWeight = FontWeight.Bold)},
             textStyle = TextStyle(Color.Blue),
-            placeholder = {Text("Please enter your password", color = Color.Black, fontWeight = FontWeight.Bold)},
+            placeholder = {Text("Please enter your password", color = Color.White, fontWeight = FontWeight.Bold)},
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "Lock icon") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(0.8f),
@@ -104,7 +112,7 @@ fun loginScreen(navController: NavController){
             fontSize = 20.sp) }
 
         Text(text = "If not registered, Register here",
-            color = Color.Black,
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable { navController.navigate(ROUTE_REGISTER)  })
 

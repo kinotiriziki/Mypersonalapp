@@ -6,7 +6,10 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.example.mypersonalapp.models.Client
+import com.example.mypersonalapp.navigation.ROUTE_DASHBOARD
+import com.example.mypersonalapp.navigation.ROUTE_VIEWCLIENT
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,8 +31,10 @@ class ClientViewModel:ViewModel() {
                      nationality:String,
                      contact :String,
                      age : String,
+                     nextOfKin :String,
                      details:String,
-                     context: Context)
+                     context: Context,
+                     navController: NavController)
     {
         viewModelScope.launch (  Dispatchers.IO ){
             try {
@@ -42,12 +47,14 @@ class ClientViewModel:ViewModel() {
                     "nationality" to nationality,
                     "contact" to contact,
                     "age" to age,
+                    "nextOfKin" to nextOfKin,
                     "details" to details,
                     "imageUrl" to imageUrl
                 )
                 ref.setValue(clientData).await()
                 withContext(Dispatchers.Main){
                     Toast.makeText(context,"Client saved Successfully",Toast.LENGTH_LONG).show()
+                    navController.navigate(ROUTE_VIEWCLIENT)
                 }
             }catch (e: Exception){
                 withContext(Dispatchers.Main){
@@ -100,6 +107,9 @@ class ClientViewModel:ViewModel() {
         }
     }
 
+
+
+
     fun updateClient(clientId: String,
                      imageUri: Uri?,
                      name: String,
@@ -107,8 +117,10 @@ class ClientViewModel:ViewModel() {
                      nationality: String,
                      contact: String,
                      age: String,
+                     nextOfKin: String,
                      details: String,
-                     context: Context){
+                     context: Context,
+                     navController: NavController){
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 val imageUrl=  imageUri?.let { uploadToCloudinary(context,it) }
@@ -119,6 +131,7 @@ class ClientViewModel:ViewModel() {
                     "nationality" to nationality,
                     "contact" to contact,
                     "age" to age,
+                    "nextOfKin" to nextOfKin,
                     "details" to details,
                     "imageUrl" to imageUrl
                 )
@@ -128,6 +141,7 @@ class ClientViewModel:ViewModel() {
                 fetchClients(context)
                 withContext(Dispatchers.Main){
                     Toast.makeText(context,"Client updated successfully",Toast.LENGTH_LONG).show()
+                    navController.navigate(ROUTE_DASHBOARD)
                 }
             }catch (e:Exception){
                 withContext(Dispatchers.Main){

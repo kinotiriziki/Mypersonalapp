@@ -8,16 +8,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mypersonalapp.ui.theme.screens.SplashScreen
 import com.example.mypersonalapp.ui.theme.screens.clients.AddClientScreen
 import com.example.mypersonalapp.ui.theme.screens.clients.ClientListScreen
 import com.example.mypersonalapp.ui.theme.screens.clients.UpdateClientScreen
 import com.example.mypersonalapp.ui.theme.screens.dashboard.DashboardScreen
 import com.example.mypersonalapp.ui.theme.screens.login.loginScreen
 import com.example.mypersonalapp.ui.theme.screens.register.registerScreen
+import com.google.firebase.appcheck.interop.R
 
 @Composable
-fun AppNavHost(navController: NavHostController= rememberNavController(),startDestination: String= ROUTE_REGISTER){
+fun AppNavHost(navController: NavHostController= rememberNavController(),startDestination: String= ROUTE_SPLASH){
     NavHost(navController=navController, startDestination = startDestination){
+        composable(ROUTE_SPLASH) { SplashScreen { navController.navigate(ROUTE_REGISTER)
+        {popUpTo(ROUTE_DASHBOARD){inclusive = true} } } }
         composable(ROUTE_REGISTER) { registerScreen(navController) }
         composable(ROUTE_LOGIN) { loginScreen(navController)  }
         composable(ROUTE_DASHBOARD) { DashboardScreen(navController) }
